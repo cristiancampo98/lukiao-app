@@ -2,9 +2,16 @@ import { useEffect, useState } from "react";
 import { IconEdit } from "../icons/edit";
 import { IconTrash } from "../icons/trash";
 import { IconClock } from "../icons/clock";
+import { IconCancel } from "../icons/cancel";
+
 import { deleteOneEmployeeById } from "../services/employees";
 
-export function ListEmployee({ employees, refreshEmployees, selectEmployee }) {
+export function ListEmployee({
+  employees,
+  refreshEmployees,
+  employeeId,
+  selectEmployee,
+}) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const deleteEmployee = async ({ employeeId }) => {
     if (loadingDelete) return;
@@ -38,9 +45,16 @@ export function ListEmployee({ employees, refreshEmployees, selectEmployee }) {
                 <td>{employee.lastname}</td>
                 <td>{employee.document_number}</td>
                 <td>
-                  <button onClick={() => selectEmployee(employee.id)}>
-                    <IconEdit />
-                  </button>
+                  {employeeId && employeeId === employee.id ? (
+                    <button onClick={() => selectEmployee(null)}>
+                      <IconCancel />
+                    </button>
+                  ) : (
+                    <button onClick={() => selectEmployee(employee.id)}>
+                      <IconEdit />
+                    </button>
+                  )}
+
                   <button
                     disabled={loadingDelete}
                     onClick={() => deleteEmployee({ employeeId: employee.id })}

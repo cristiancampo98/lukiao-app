@@ -18,9 +18,9 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
   });
 
   useEffect(() => {
-    const fetchEmployee = async () => {
+    const getEmployee = async () => {
       try {
-        const employee = await findOneEmployeeById();
+        const employee = await findOneEmployeeById({ employeeId });
         if (Object.keys(employee).length) {
           setValue("firstname", employee.firstname);
           setValue("lastname", employee.lastname);
@@ -38,7 +38,7 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
       }
     };
 
-    fetchEmployee();
+    getEmployee();
   }, [employeeId, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -48,7 +48,6 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
 
     if (!response) return;
 
-    
     onUpdateSuccess(updatedEmployee); // Notificar éxito en la actualización
   });
 

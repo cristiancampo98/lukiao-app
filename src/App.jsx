@@ -33,6 +33,7 @@ function App() {
         <ListEmployee
           employees={employees}
           refreshEmployees={addEmployee}
+          employeeId={selectedEmployeeId}
           selectEmployee={setSelectedEmployeeId}
         />
       </main>
