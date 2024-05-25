@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export  const storeEmployeeSchema = yup
+export  const employeeSchema = yup
 .object()
 .shape({
   firstname: yup
@@ -14,11 +14,13 @@ export  const storeEmployeeSchema = yup
   document_number: yup
     .string()
     .required("Document number is required")
-    .length(10, "Document number must be exactly 10 characters"),
+    .length(10, "Document number must be exactly 10 characters")
+    .matches(/^\d+$/, "Document number must be only digits"),
   cellphone_number: yup
     .string()
     .required("Cellphone number is required")
-    .length(10, "Cellphone number must be exactly 10 characters"),
+    .length(10, "Cellphone number must be exactly 10 characters")
+    .matches(/^\d+$/, "Cellphone number must be only digits"),
   country: yup
     .string()
     .required("Country is required")

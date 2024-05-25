@@ -1,15 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IconEdit } from "../icons/edit";
 import { IconTrash } from "../icons/trash";
+import { IconClock } from "../icons/clock";
 
-export function ListEmployee({ employees, refreshEmployees }) {
+export function ListEmployee({ employees, refreshEmployees, selectEmployee }) {
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const deleteEmployee = async ({ employeeId }) => {
+    if (loadingDelete) return;
+    setLoadingDelete(true);
     await fetch(`http://localhost:8000/api/employees/${employeeId}`, {
       method: "DELETE",
     });
+    setLoadingDelete(false);
 
     refreshEmployees();
   };
+
   useEffect(() => {
     refreshEmployees();
   }, []);
@@ -17,18 +23,36 @@ export function ListEmployee({ employees, refreshEmployees }) {
   return (
     <div>
       {employees.length > 0 ? (
-        <ul>
-          {employees.map((employee) => (
-            <li key={employee.id}>
-              {employee.firstname} {employee.lastname} -{" "}
-              {employee.document_number}
-              <IconEdit />
-              <i onClick={() => deleteEmployee({ employeeId: employee.id })}>
-                <IconTrash />
-              </i>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Firstname</th>
+              <th>Lastname</th>
+              <th>Document Number</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employees.map((employee) => (
+              <tr key={employee.id}>
+                <td>{employee.firstname}</td>
+                <td>{employee.lastname}</td>
+                <td>{employee.document_number}</td>
+                <td>
+                  <button onClick={() => selectEmployee(employee.id)}>
+                    <IconEdit />
+                  </button>
+                  <button
+                    disabled={loadingDelete}
+                    onClick={() => deleteEmployee({ employeeId: employee.id })}
+                  >
+                    {loadingDelete ? <IconClock /> : <IconTrash />}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No employees found</p>
       )}

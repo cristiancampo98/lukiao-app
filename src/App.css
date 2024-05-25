@@ -1,8 +1,19 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+}
+input {
+  padding: 8px 12px;
+}
+
+table {
+  background: #403f3f;
+  th {
+    padding: 10px 16px;
+  }
+  td {
+    padding: 0px 16px;
+  }
 }
 
 .principal-container {
@@ -18,6 +29,7 @@
 .form-create .input-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 8px;
   span {
     text-align: left;
     color: #ff6666;

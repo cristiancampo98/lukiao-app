@@ -1,39 +1,70 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { InputGroup } from "../components/InputGroup";
 import { employeeSchema } from "../schemas/employeeSchema";
 
-export function CreateEmployee({ onEmployeeCreated }) {
+export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: yupResolver(employeeSchema),
   });
 
-  const onSubmit = handleSubmit(async (values) => {
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/employees/${employeeId}`
+        );
+        if (response.ok) {
+          const employee = await response.json();
+          setValue("firstname", employee.firstname);
+          setValue("lastname", employee.lastname);
+          setValue("document_number", employee.document_number);
+          setValue("cellphone_number", employee.cellphone_number);
+          setValue("country", employee.country);
+          setValue("city", employee.city);
+        } else {
+          console.log("Failed to fetch employee data.");
+        }
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployee();
+  }, [employeeId, setValue]);
+
+  const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-    const response = await fetch("http://localhost:8000/api/employees", {
-      body: JSON.stringify(values),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `http://localhost:8000/api/employees/${employeeId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
     setLoading(false);
+
     if (!response.ok) {
       const errorData = await response.json();
       console.log("Validation errors:", errorData);
-    } else {
-      onEmployeeCreated();
-      reset();
+      return;
     }
+    const updatedEmployee = await response.json();
+    onUpdateSuccess(updatedEmployee); // Notificar éxito en la actualización
   });
 
   return (
@@ -75,8 +106,8 @@ export function CreateEmployee({ onEmployeeCreated }) {
           errors={errors}
           placeholder="City"
         />
-        {(loading && <button disabled> Guardando ...</button>) || (
-          <button>Guardar</button>
+        {(loading && <button disabled> Actualizando ...</button>) || (
+          <button>Actualizar</button>
         )}
       </form>
     </>
