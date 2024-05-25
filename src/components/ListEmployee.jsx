@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import { IconEdit } from "../icons/edit";
 import { IconTrash } from "../icons/trash";
 import { IconClock } from "../icons/clock";
+import { deleteOneEmployeeById } from "../services/employees";
 
 export function ListEmployee({ employees, refreshEmployees, selectEmployee }) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const deleteEmployee = async ({ employeeId }) => {
     if (loadingDelete) return;
     setLoadingDelete(true);
-    await fetch(`http://localhost:8000/api/employees/${employeeId}`, {
-      method: "DELETE",
-    });
+    const response = await deleteOneEmployeeById({ employeeId });
     setLoadingDelete(false);
 
-    refreshEmployees();
+    if (response) refreshEmployees();
   };
 
   useEffect(() => {

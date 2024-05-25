@@ -4,28 +4,19 @@ import "./App.css";
 import { CreateEmployee } from "./components/CreateEmployee";
 import { ListEmployee } from "./components/ListEmployee";
 import { UpdateEmployee } from "./components/UpdateEmployee";
+import { findAllEmployees } from "./services/employees";
 
 function App() {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
   const addEmployee = async () => {
-    const response = await fetch("http://localhost:8000/api/employees", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-    const data = await response.json();
+    const data = await findAllEmployees();
     setEmployees(data);
   };
 
-  const handleUpdateSuccess = (updatedEmployee) => {
-    setEmployees((prevEmployees) =>
-      prevEmployees.map((employee) =>
-        employee.id === updatedEmployee.id ? updatedEmployee : employee
-      )
-    );
+  const handleUpdateSuccess = () => {
+    addEmployee();
     setSelectedEmployeeId(null);
   };
   return (

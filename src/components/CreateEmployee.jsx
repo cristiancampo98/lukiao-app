@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InputGroup } from "../components/InputGroup";
 import { employeeSchema } from "../schemas/employeeSchema";
 
+import { createEmployee } from "../services/employees";
+
 export function CreateEmployee({ onEmployeeCreated }) {
   const [loading, setLoading] = useState(false);
   const {
@@ -18,16 +20,9 @@ export function CreateEmployee({ onEmployeeCreated }) {
 
   const onSubmit = handleSubmit(async (values) => {
     setLoading(true);
-    const response = await fetch("http://localhost:8000/api/employees", {
-      body: JSON.stringify(values),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await createEmployee({ payload: values });
     setLoading(false);
-    if (!response.ok) {
+    if (!response) {
       const errorData = await response.json();
       console.log("Validation errors:", errorData);
     } else {

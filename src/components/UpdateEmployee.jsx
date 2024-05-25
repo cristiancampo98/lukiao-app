@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { InputGroup } from "../components/InputGroup";
 import { employeeSchema } from "../schemas/employeeSchema";
+import { findOneEmployeeById, updateEmployee } from "../services/employees";
 
 export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -19,11 +20,8 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/employees/${employeeId}`
-        );
-        if (response.ok) {
-          const employee = await response.json();
+        const employee = await findOneEmployeeById();
+        if (Object.keys(employee).length) {
           setValue("firstname", employee.firstname);
           setValue("lastname", employee.lastname);
           setValue("document_number", employee.document_number);
@@ -45,25 +43,12 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess }) {
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-    const response = await fetch(
-      `http://localhost:8000/api/employees/${employeeId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await updateEmployee({ employeeId, payload: data });
     setLoading(false);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.log("Validation errors:", errorData);
-      return;
-    }
-    const updatedEmployee = await response.json();
+    if (!response) return;
+
+    
     onUpdateSuccess(updatedEmployee); // Notificar éxito en la actualización
   });
 
