@@ -11,15 +11,21 @@ export function ListEmployee({
   refreshEmployees,
   employeeId,
   selectEmployee,
+  onError,
 }) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const deleteEmployee = async ({ employeeId }) => {
-    if (loadingDelete) return;
-    setLoadingDelete(true);
-    const response = await deleteOneEmployeeById({ employeeId });
-    setLoadingDelete(false);
-
-    if (response) refreshEmployees();
+    try {
+      if (loadingDelete) return;
+      onError("");
+      setLoadingDelete(true);
+      await deleteOneEmployeeById({ employeeId });
+    } catch (error) {
+      onError(error.message);
+    } finally {
+      setLoadingDelete(false);
+      refreshEmployees();
+    }
   };
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { employeeSchema } from "../schemas/employeeSchema";
 
 import { createEmployee } from "../services/employees";
 
-export function CreateEmployee({ onEmployeeCreated }) {
+export function CreateEmployee({ onEmployeeCreated, onError }) {
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -19,15 +19,16 @@ export function CreateEmployee({ onEmployeeCreated }) {
   });
 
   const onSubmit = handleSubmit(async (values) => {
-    setLoading(true);
-    const response = await createEmployee({ payload: values });
-    setLoading(false);
-    if (!response) {
-      const errorData = await response.json();
-      console.log("Validation errors:", errorData);
-    } else {
+    try {
+      setLoading(true);
+      onError("");
+      await createEmployee({ payload: values });
       onEmployeeCreated();
       reset();
+    } catch (error) {
+      onError(error.message);
+    } finally {
+      setLoading(false);
     }
   });
 
