@@ -6,71 +6,101 @@ export const findAllEmployees = async () => {
         Accept: "application/json",
       },
     });
-    const data = await response.json();
-    return data
-  } catch (error) {
-    return []
-  }
-}
 
-export const createEmployee = async ({payload}) => {
+    if (!response.ok) {
+      throw new Error(`Error fetching employees: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Failed to fetch employees");
+  }
+};
+
+export const createEmployee = async ({ payload }) => {
   try {
     const response = await fetch("http://localhost:8000/api/employees", {
-    body: JSON.stringify(payload),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  });
-  return response.ok
-  } catch (error) {
-    return error.message
-  }
-}
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
 
-export const updateEmployee = async({employeeId, payload}) => {
-  try {
-    const response = await fetch(
-      `http://localhost:8000/api/employees/${employeeId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-    return response.ok
-  } catch (error) {
-    return error.message
-  }
-}
-
-export const findOneEmployeeById = async ({employeeId}) => {
-  try {
-    const response = await fetch(
-      `http://localhost:8000/api/employees/${employeeId}`
-    );
-    if (response.ok) {
-      const data = await response.json();
-      return data
-    } else {
-      console.log("Failed to fetch employee data.");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Error creating employee: ${errorData.message}`);
     }
-  } catch (error) {
-    return error.message
-  } 
-}
 
-export const deleteOneEmployeeById = async ({employeeId}) => {
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Failed to create employee");
+  }
+};
+
+export const updateEmployee = async ({ employeeId, payload }) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/employees/${employeeId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Error updating employee: ${errorData.message}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Failed to update employee");
+  }
+};
+
+export const findOneEmployeeById = async ({ employeeId }) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/employees/${employeeId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching employee with ID ${employeeId}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error.message);
+    throw new Error(`Failed to fetch employee with ID ${employeeId}`);
+  }
+};
+
+export const deleteOneEmployeeById = async ({ employeeId }) => {
   try {
     const response = await fetch(`http://localhost:8000/api/employees/${employeeId}`, {
       method: "DELETE",
     });
-    return response.ok
+
+    if (!response.ok) {
+      throw new Error(`Error deleting employee with ID ${employeeId}: ${response.statusText}`);
+    }
+
+    return true;
   } catch (error) {
-    return false
+    console.error(error.message);
+    throw new Error(`Failed to delete employee with ID ${employeeId}`);
   }
-}
+};
