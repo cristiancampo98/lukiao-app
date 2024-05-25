@@ -9,6 +9,7 @@ import { findOneEmployeeById, updateEmployee } from "../services/employees";
 export function UpdateEmployee({ employeeId, onUpdateSuccess, onError }) {
   const [loading, setLoading] = useState(false);
   const {
+    watch,
     register,
     handleSubmit,
     formState: { errors },
@@ -30,7 +31,7 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess, onError }) {
         setValue("city", employee.city);
       } catch (error) {
         onError(error.message);
-        onUpdateSuccess()
+        onUpdateSuccess();
       } finally {
         setLoading(false);
       }
@@ -57,36 +58,42 @@ export function UpdateEmployee({ employeeId, onUpdateSuccess, onError }) {
       <form className="form-create" onSubmit={onSubmit}>
         <InputGroup
           register={register}
+          watch={watch}
           name="firstname"
           errors={errors}
           placeholder="First Name"
         />
         <InputGroup
           register={register}
+          watch={watch}
           name="lastname"
           errors={errors}
           placeholder="Last Name"
         />
         <InputGroup
           register={register}
+          watch={watch}
           name="document_number"
           errors={errors}
           placeholder="Document Number"
         />
         <InputGroup
           register={register}
+          watch={watch}
           name="cellphone_number"
           errors={errors}
           placeholder="Cellphone Number"
         />
         <InputGroup
           register={register}
+          watch={watch}
           name="country"
           errors={errors}
           placeholder="Country"
         />
         <InputGroup
           register={register}
+          watch={watch}
           name="city"
           errors={errors}
           placeholder="City"
